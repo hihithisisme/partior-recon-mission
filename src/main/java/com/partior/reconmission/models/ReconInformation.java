@@ -7,6 +7,6 @@ import lombok.Value;
 @Builder
 public class ReconInformation {
     Starship starship;
-    int crew;
+    long crew;
     boolean isLeiaOnPlanet;
 }
