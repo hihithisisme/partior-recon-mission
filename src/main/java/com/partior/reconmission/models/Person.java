@@ -3,6 +3,7 @@ package com.partior.reconmission.models;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.partior.reconmission.clients.StarWarsInformationClient;
 
@@ -25,5 +26,9 @@ public class Person {
         }
 
         return response;
+    }
+
+    public Optional<Planet> expandHomeworld(final StarWarsInformationClient swClient) {
+        return swClient.getPlanet(homeworld);
     }
 }

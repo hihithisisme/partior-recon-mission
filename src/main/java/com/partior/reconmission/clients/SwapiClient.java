@@ -20,7 +20,6 @@ import com.partior.reconmission.models.Starship;
 import lombok.Builder;
 import lombok.extern.jackson.Jacksonized;
 
-// @AllArgsConstructor
 @Component
 public class SwapiClient implements StarWarsInformationClient {
     private final String baseUrl;

@@ -18,6 +18,8 @@ public class ReconService {
     private static final String DEATH_STAR = "Death Star";
     private static final String DARTH_VADER = "Darth Vader";
     private static final String LEIA_ORGANA = "Leia Organa";
+    private static final String ALDERAAN = "Alderaan";
+
     @Autowired
     private final StarWarsInformationClient infoClient;
 
@@ -31,8 +33,9 @@ public class ReconService {
 
     private boolean getIsLeiaOnAlderaan() {
         final Optional<Person> leiaOrgana = infoClient.getPersonBySearch(LEIA_ORGANA);
-
-        return false;
+        return leiaOrgana.flatMap(leia -> leia.expandHomeworld(infoClient))
+                .map(planet -> planet.getName().equals(ALDERAAN))
+                .orElse(false);
     }
 
     private Starship getDarthVaderStarship() {

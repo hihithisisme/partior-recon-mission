@@ -1,6 +1,8 @@
 package com.partior.reconmission.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,8 +48,6 @@ public class InformationControllerTest {
     class GetInformation {
         @BeforeEach
         void defaultSetUp() {
-            
-
             when(infoClient.getStarshipBySearch(DEATH_STAR))
                         .thenReturn(Optional.of(Starship.builder()
                                 .name(DEATH_STAR)
@@ -63,7 +63,7 @@ public class InformationControllerTest {
                 .thenReturn(Optional.of(Person.builder()
                     .name(LEIA_ORGANA)
                     .starships(Arrays.asList())
-                    .homeworld(null)
+                    .homeworld(PLANET_URI)
                     .build()));
 
             when(infoClient.getStarship(STARSHIP_URI))
@@ -139,5 +139,44 @@ public class InformationControllerTest {
 
         }
 
+        @Nested
+        class GetIsLeiaOnAlderaan {
+            @Test
+            void returnTrue() {
+                final ReconInformation information = controller.getInformation();
+                assertTrue(information.isLeiaOnPlanet());
+            }
+
+            @Nested
+            class WhenLeiaOrganaNotFound {
+
+                @Test
+                void returnNull() {
+                    final ReconInformation information = controller.getInformation();
+                    assertFalse(information.isLeiaOnPlanet());
+                }
+
+                @BeforeEach
+                void setUp() {
+                    when(infoClient.getPersonBySearch(LEIA_ORGANA))
+                        .thenReturn(Optional.empty());
+                }
+            }
+
+            @Nested
+            class WhenURINotFound {
+                @Test
+                void returnNull() {
+                    final ReconInformation information = controller.getInformation();
+                    assertFalse(information.isLeiaOnPlanet());
+                }
+
+                @BeforeEach
+                void setUp() {
+                    when(infoClient.getPlanet(PLANET_URI))
+                        .thenReturn(Optional.empty());
+                }
+            }
+        }
     }
 }
