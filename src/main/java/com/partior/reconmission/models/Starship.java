@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -29,6 +30,7 @@ public class Starship {
     String model;
 
     @JsonDeserialize(using = CrewStringToLongDeserializer.class)
+    @JsonProperty(access = Access.WRITE_ONLY)
     Long crew;
 
     // NOTE: There is no comprehensive format for the field crew. This deserializer
