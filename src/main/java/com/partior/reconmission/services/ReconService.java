@@ -10,24 +10,40 @@ import com.partior.reconmission.models.Person;
 import com.partior.reconmission.models.ReconInformation;
 import com.partior.reconmission.models.Starship;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class ReconService {
     private static final String DEATH_STAR = "Death Star";
     private static final String DARTH_VADER = "Darth Vader";
     private static final String LEIA_ORGANA = "Leia Organa";
     @Autowired
-    private StarWarsInformationClient infoClient;
+    private final StarWarsInformationClient infoClient;
 
     public ReconInformation getInformation() {
-        final Optional<Starship> deathStar = infoClient.getStarship(DEATH_STAR);
-        final Optional<Person> darthVader = infoClient.getPerson(DARTH_VADER);
-        final Optional<Person> leiaOrgana = infoClient.getPerson(LEIA_ORGANA);
-
-        // TODO: mocked data for the time being
         return ReconInformation.builder()
-                .crew(deathStar.map(Starship::getCrew).orElse(0L))
-                .isLeiaOnPlanet(true)
-                .starship(Starship.builder().build())
+                .crew(getDeathStarCrewSize())
+                .starship(getDarthVaderStarship())
+                .isLeiaOnPlanet(getIsLeiaOnAlderaan())
                 .build();
+    }
+
+    private boolean getIsLeiaOnAlderaan() {
+        final Optional<Person> leiaOrgana = infoClient.getPersonBySearch(LEIA_ORGANA);
+
+        return false;
+    }
+
+    private Starship getDarthVaderStarship() {
+        final Optional<Person> darthVader = infoClient.getPersonBySearch(DARTH_VADER);
+        final Optional<Starship> darthVaderShip = darthVader
+                .map(p -> p.expandStarships(infoClient).stream().findFirst()).orElseGet(Optional::empty);
+        return darthVaderShip.orElseGet(() -> null);
+    }
+
+    private long getDeathStarCrewSize() {
+        final Optional<Starship> deathStar = infoClient.getStarshipBySearch(DEATH_STAR);
+        return deathStar.map(Starship::getCrew).orElse(0L);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.partior.reconmission.models.Person;
+import com.partior.reconmission.models.Planet;
 import com.partior.reconmission.models.Starship;
 
 import lombok.Builder;
@@ -38,7 +39,7 @@ public class SwapiClient implements StarWarsInformationClient {
     }
 
     @Override
-    public Optional<Starship> getStarship(final String name) {
+    public Optional<Starship> getStarshipBySearch(final String name) {
         final URI uri = buildSearchUri("starships", name);
 
         final ResponseEntity<PagedResult<Starship>> response = restTemplate.exchange(
@@ -51,7 +52,29 @@ public class SwapiClient implements StarWarsInformationClient {
     }
 
     @Override
-    public Optional<Person> getPerson(final String name) {
+    public Optional<Starship> getStarship(final URI uri) {
+        final ResponseEntity<Starship> response = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                null,
+                Starship.class);
+
+        return Optional.of(response.getBody());
+    }
+
+    @Override
+    public Optional<Planet> getPlanet(final URI uri) {
+        final ResponseEntity<Planet> response = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                null,
+                Planet.class);
+
+        return Optional.of(response.getBody());
+    }
+
+    @Override
+    public Optional<Person> getPersonBySearch(final String name) {
         final URI uri = buildSearchUri("people", name);
 
         final ResponseEntity<PagedResult<Person>> response = restTemplate.exchange(

@@ -45,7 +45,7 @@ public class SwapiClientTests {
 
             @Test
             void returnEmptyOptional() {
-                final Optional<Starship> response = client.getStarship("notReal");
+                final Optional<Starship> response = client.getStarshipBySearch("notReal");
 
                 verify(rest).exchange(URI.create("https://example.com/starships?search=notReal"),
                         HttpMethod.GET, null,
@@ -73,7 +73,7 @@ public class SwapiClientTests {
 
             @Test
             void returnOptionalStarship() {
-                final Optional<Starship> response = client.getStarship("Death Star");
+                final Optional<Starship> response = client.getStarshipBySearch("Death Star");
 
                 verify(rest).exchange(URI.create("https://example.com/starships?search=Death%20Star"),
                         HttpMethod.GET, null,
@@ -103,7 +103,7 @@ public class SwapiClientTests {
 
             @Test
             void returnEmptyOptional() {
-                final Optional<Person> response = client.getPerson("notReal");
+                final Optional<Person> response = client.getPersonBySearch("notReal");
 
                 verify(rest).exchange(URI.create("https://example.com/people?search=notReal"),
                         HttpMethod.GET, null,
@@ -131,7 +131,7 @@ public class SwapiClientTests {
 
             @Test
             void returnOptionalPerson() {
-                final Optional<Person> response = client.getPerson("Darth Vader");
+                final Optional<Person> response = client.getPersonBySearch("Darth Vader");
 
                 verify(rest).exchange(URI.create("https://example.com/people?search=Darth%20Vader"),
                         HttpMethod.GET, null,

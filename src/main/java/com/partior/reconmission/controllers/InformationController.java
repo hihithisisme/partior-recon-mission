@@ -8,11 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.partior.reconmission.models.ReconInformation;
 import com.partior.reconmission.services.ReconService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
 @RequestMapping("/information")
+@AllArgsConstructor
 public class InformationController {
     @Autowired
-    private ReconService reconService;
+    private final ReconService reconService;
 
     @GetMapping
     public ReconInformation getInformation() {
