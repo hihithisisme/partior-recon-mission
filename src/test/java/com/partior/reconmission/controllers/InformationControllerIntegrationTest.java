@@ -1,14 +1,15 @@
 package com.partior.reconmission.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Optional;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -22,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.partior.reconmission.Fixtures;
 import com.partior.reconmission.clients.StarWarsInformationClient;
-import com.partior.reconmission.models.ReconInformation;
 
 @Tag("integration")
 @SpringBootTest
@@ -42,20 +42,13 @@ public class InformationControllerIntegrationTest {
 
         @Test
         void returnDefaultResponse() throws Exception {
-            final ReconInformation expected = ReconInformation.builder()
-                    .crew(0L)
-                    .starship(null)
-                    .isLeiaOnPlanet(false)
-                    .build();
-
-            final ReconInformation response = mapper.readValue(
-                    mockMvc.perform(get("/information"))
-                            .andDo(print())
-                            .andExpect(status().isOk())
-                            .andReturn().getResponse().getContentAsString(),
-                    ReconInformation.class);
-
-            assertEquals(expected, response);
+            mockMvc.perform(get("/information"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.crew").value(0L))
+                    .andExpect(jsonPath("$.starship", Matchers.nullValue()))
+                    .andExpect(jsonPath("$.isLeiaOnPlanet").value(false))
+                    .andReturn().getResponse().getContentAsString();
         }
 
         @BeforeEach
@@ -71,20 +64,21 @@ public class InformationControllerIntegrationTest {
     }
 
     @Test
-    void returnResponse() throws Exception {
-        final ReconInformation expected = ReconInformation.builder()
-                .crew(Fixtures.DEATH_STAR_CREW)
-                .starship(Fixtures.DARTH_STARSHIP.withCrew(null))
-                .isLeiaOnPlanet(true)
-                .build();
+    void returnResponseWithExactFieldNames() throws Exception {
+        mockMvc.perform(get("/information"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.crew").value(Fixtures.DEATH_STAR_CREW))
 
-        final ReconInformation response = mapper.readValue(
-                mockMvc.perform(get("/information"))
-                        .andDo(print())
-                        .andExpect(status().isOk())
-                        .andReturn().getResponse().getContentAsString(),
-                ReconInformation.class);
+                .andExpect(jsonPath("$.isLeiaOnPlanet").value(true))
+                .andExpect(jsonPath("$.leiaOnPlanet").doesNotExist())
 
-        assertEquals(expected, response);
+                .andExpect(jsonPath("$.starship.name").value(Fixtures.DARTH_STARSHIP.getName()))
+                .andExpect(jsonPath("$.starship.model").value(Fixtures.DARTH_STARSHIP.getModel()))
+                .andExpect(jsonPath("$.starship.class").value(Fixtures.DARTH_STARSHIP.getShipClass()))
+                .andExpect(jsonPath("$.starship.starship_class").doesNotExist())
+                .andExpect(jsonPath("$.starship.shipClass").doesNotExist())
+                .andExpect(jsonPath("$.starship.crew").doesNotExist())
+                .andReturn().getResponse().getContentAsString();
     }
 }

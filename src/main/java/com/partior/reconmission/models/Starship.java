@@ -5,7 +5,10 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -26,15 +29,21 @@ import lombok.extern.jackson.Jacksonized;
 public class Starship {
     String name;
 
-    @JsonProperty("starship_class")
-    String shipClass;
-
     String model;
 
     @JsonDeserialize(using = CrewStringToLongDeserializer.class)
     @JsonProperty(access = Access.WRITE_ONLY)
     Long crew;
 
+    // NOTE: This allows for "starship_class" to be used for deserialization and
+    // "class" for serialization
+    @JsonSetter(value = "starship_class")
+    String shipClass;
+
+    @JsonGetter(value = "class")
+    public String getShipClass() {
+        return shipClass;
+    }
     // NOTE: There is no comprehensive format for the field crew. This deserializer
     // only tackles the existing, observed formats
     static class CrewStringToLongDeserializer extends JsonDeserializer<Long> {
