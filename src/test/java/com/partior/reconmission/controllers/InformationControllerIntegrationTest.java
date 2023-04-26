@@ -20,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.partior.reconmission.Fixtures;
 import com.partior.reconmission.clients.StarWarsInformationClient;
 
@@ -30,9 +29,6 @@ import com.partior.reconmission.clients.StarWarsInformationClient;
 public class InformationControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper mapper;
 
     @MockBean
     StarWarsInformationClient infoClient;
