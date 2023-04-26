@@ -16,11 +16,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Builder;
 import lombok.Value;
+import lombok.With;
 import lombok.extern.jackson.Jacksonized;
 
 @Jacksonized
 @Value
 @Builder
+@With
 public class Starship {
     String name;
 
